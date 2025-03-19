@@ -38,6 +38,13 @@ contract E2ETest is Test {
         tokenPolygon = new MyGovernanceToken("MyGovernanceToken", "MGT", polygonEndpoint, 8, owner);
         vm.prank(owner);
         tokenPolygon.transferOwnership(owner);
+
+        // Set trusted remotes for mock LayerZero routing
+        vm.selectFork(ethFork);
+        tokenETH.setTrustedRemote(109, abi.encodePacked(address(tokenPolygon), address(tokenETH)));
+
+        vm.selectFork(polygonFork);
+        tokenPolygon.setTrustedRemote(101, abi.encodePacked(address(tokenETH), address(tokenPolygon)));
     }
 
     function testCrossChainDelegateRoundTrip() public {
