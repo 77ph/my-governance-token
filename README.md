@@ -32,3 +32,8 @@ forge script script/TransferOwnershipToDead.s.sol --rpc-url $RPC_URL --broadcast
 
 ### 🔹 Cross-chain Transfer
 Use `safeSendFrom(...)` with appropriate params.
+
+### E2E test
+forge test --match-path test/E2E.t.sol
+
+
