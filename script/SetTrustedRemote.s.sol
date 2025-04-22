@@ -13,8 +13,8 @@ contract SetTrustedRemote is Script {
         address localToken = token;
 
         vm.startBroadcast(deployerPK);
-	MyGovernanceToken(token).setPeer(
-            remoteChainId,                        // dstEid: Chain ID (LayerZero EID) of Polygon
+        MyGovernanceToken(token).setPeer(
+            remoteChainId, // dstEid: Chain ID (LayerZero EID) of Polygon
             bytes32(uint256(uint160(address(remoteToken)))) // peer: адрес токена в Polygon в виде bytes32
         );
         /*

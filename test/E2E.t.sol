@@ -42,13 +42,13 @@ contract E2ETest is Test {
         // Set trusted remotes for mock LayerZero routing
         vm.selectFork(ethFork);
         tokenETH.setPeer(
-            109,                        // dstEid: Chain ID (LayerZero EID) of Polygon
+            109, // dstEid: Chain ID (LayerZero EID) of Polygon
             bytes32(uint256(uint160(address(tokenPolygon)))) // peer: адрес токена в Polygon в виде bytes32
         );
 
         vm.selectFork(polygonFork);
         tokenETH.setPeer(
-            101,                        // dstEid: Chain ID (LayerZero EID) of Polygon
+            101, // dstEid: Chain ID (LayerZero EID) of Polygon
             bytes32(uint256(uint160(address(tokenETH)))) // peer: адрес токена в Polygon в виде bytes32
         );
     }

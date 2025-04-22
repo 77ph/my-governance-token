@@ -49,7 +49,7 @@ contract TokenTest is Test {
         return bytes32(uint256(uint160(_addr)));
     }
 
-/*
+    /*
     function testSafeSend() public payable {
         vm.expectRevert();
         vm.prank(user);
@@ -68,7 +68,7 @@ contract TokenTest is Test {
         MessagingFee memory fee = token.quoteSend(sendParam, false);
         token.send{value: fee.nativeFee}(sendParam, fee, msg.sender);
     }
-*/
+    */
 
     function testDelegateTracksAfterTransfer() public {
         vm.prank(owner);
