@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./GovernanceOFTV2.sol";
+//import "./GovernanceOFTV2.sol";
+
+import "solidity-examples/token/oft/v2/OFTV2.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
-import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+
+//import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MyGovernanceToken is GovernanceOFTV2, ERC20Votes, Ownable {
+//contract MyGovernanceToken is GovernanceOFTV2, ERC20Votes, Ownable {
+contract MyGovernanceToken is Ownable, ERC20, ERC20Permit, ERC20Votes, OFTV2  {
     uint8 private immutable _sharedDecimals;
 
     constructor(
@@ -16,10 +22,11 @@ contract MyGovernanceToken is GovernanceOFTV2, ERC20Votes, Ownable {
         uint8 sharedDecimals_,
         address initialOwner
     )
-        GovernanceOFTV2(name_, symbol_, sharedDecimals_, lzEndpoint_)
-        ERC20Votes()
-        EIP712(name_, "1")
         Ownable(initialOwner)
+	    ERC20(name_, symbol_) 
+        ERC20Permit(name_)
+        OFTV2(name_, symbol_, sharedDecimals_, lzEndpoint_)
+        
     {
         _sharedDecimals = sharedDecimals_;
         _mint(initialOwner, 1_000_000 * 10 ** decimals());
