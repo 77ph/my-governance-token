@@ -27,7 +27,6 @@ contract MyGovernanceToken is OFT, ERC20Votes {
         address lzEndpoint_,
         address initialOwner
     )
-
         OFT(name_, symbol_, lzEndpoint_, initialOwner) 
         Ownable(initialOwner)
         ERC20Votes()
@@ -54,27 +53,5 @@ contract MyGovernanceToken is OFT, ERC20Votes {
     ) external payable {
         require(_sendParam.amountLD >= 10 ** 10, "Too small"); // 1e10 = 0.00000001 токена (пример)
         _send(_sendParam, _fee, _refundAddress);
-    }
-
-    // Vote tracking
-    function _afterTokenTransfer(address from, address to, uint256 amount)
-        internal
-        override(ERC20, ERC20Votes)
-    {
-        super._afterTokenTransfer(from, to, amount);
-    }
-
-    function _mint(address to, uint256 amount)
-        internal
-        override(ERC20, ERC20Votes)
-    {
-        super._mint(to, amount);
-    }
-
-    function _burn(address from, uint256 amount)
-        internal
-        override(ERC20, ERC20Votes)
-    {
-        super._burn(from, amount);
     }
 }
