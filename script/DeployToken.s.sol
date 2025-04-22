@@ -11,7 +11,7 @@ contract DeployToken is Script {
         address initialOwner = vm.envAddress("TOKEN_OWNER");
 
         vm.startBroadcast(deployerPK);
-        new MyGovernanceToken("MyGovernanceToken", "MGT", lzEndpoint, 8, initialOwner);
+        new MyGovernanceToken("MyGovernanceToken", "MGT", lzEndpoint, initialOwner);
         vm.stopBroadcast();
     }
 }

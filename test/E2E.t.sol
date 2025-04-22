@@ -28,23 +28,29 @@ contract E2ETest is Test {
         // Deploy token on Ethereum fork
         vm.selectFork(ethFork);
         address ethEndpoint = 0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675;
-        tokenETH = new MyGovernanceToken("MyGovernanceToken", "MGT", ethEndpoint, 8, owner);
+        tokenETH = new MyGovernanceToken("MyGovernanceToken", "MGT", ethEndpoint, owner);
         vm.prank(owner);
         tokenETH.transferOwnership(owner);
 
         // Deploy token on Polygon fork
         vm.selectFork(polygonFork);
         address polygonEndpoint = 0x3c2269811836af69497E5F486A85D7316753cf62;
-        tokenPolygon = new MyGovernanceToken("MyGovernanceToken", "MGT", polygonEndpoint, 8, owner);
+        tokenPolygon = new MyGovernanceToken("MyGovernanceToken", "MGT", polygonEndpoint, owner);
         vm.prank(owner);
         tokenPolygon.transferOwnership(owner);
 
         // Set trusted remotes for mock LayerZero routing
         vm.selectFork(ethFork);
-        tokenETH.setTrustedRemote(109, abi.encodePacked(address(tokenPolygon), address(tokenETH)));
+        tokenETH.setPeer(
+            109,                        // dstEid: Chain ID (LayerZero EID) of Polygon
+            bytes32(uint256(uint160(address(tokenPolygon)))) // peer: адрес токена в Polygon в виде bytes32
+        );
 
         vm.selectFork(polygonFork);
-        tokenPolygon.setTrustedRemote(101, abi.encodePacked(address(tokenETH), address(tokenPolygon)));
+        tokenETH.setPeer(
+            101,                        // dstEid: Chain ID (LayerZero EID) of Polygon
+            bytes32(uint256(uint160(address(tokenETH)))) // peer: адрес токена в Polygon в виде bytes32
+        );
     }
 
     function testCrossChainDelegateRoundTrip() public {

@@ -17,7 +17,7 @@ contract TokenTest is Test {
     address bob = address(0xB0B);
 
     function setUp() public {
-        token = new MyGovernanceToken("MyGovernanceToken", "MGT", address(0x1), 8, owner);
+        token = new MyGovernanceToken("MyGovernanceToken", "MGT", address(0x1), owner);
         vm.prank(owner);
         token.transferOwnership(owner);
     }
@@ -40,10 +40,32 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(user), 6 ether);
     }
 
-    function testSafeSendTooSmall() public {
+    /**
+     * @dev Converts an address to bytes32.
+     * @param _addr The address to convert.
+     * @return The bytes32 representation of the address.
+     */
+    function addressToBytes32(address _addr) internal pure returns (bytes32) {
+        return bytes32(uint256(uint160(_addr)));
+    }
+
+    function testSafeSend() public payable {
         vm.expectRevert();
         vm.prank(user);
-        token.safeSendFrom(user, 109, abi.encodePacked(user), 1, user, address(0), "");
+        // token.safeSendFrom(user, 109, abi.encodePacked(user), 1, user, address(0), "");
+
+        SendParam memory sendParam = SendParam(
+            109, // You can also make this dynamic if needed
+            addressToBytes32(user),
+            1 ether,
+            1 ether * 9 / 10,
+            "",
+            "",
+            ""
+        );
+
+        MessagingFee memory fee = token.quoteSend(sendParam, false);
+        token.send{value: fee.nativeFee}(sendParam, fee, msg.sender);
     }
 
     function testDelegateTracksAfterTransfer() public {

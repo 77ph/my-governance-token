@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import { OFT } from "@layerzerolabs/oft-evm/contracts/OFT.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 
 struct SendParam {
      uint32 dstEid; // Destination endpoint ID.
@@ -30,6 +31,7 @@ contract MyGovernanceToken is OFT, ERC20Votes {
         OFT(name_, symbol_, lzEndpoint_, initialOwner) 
         Ownable(initialOwner)
         ERC20Votes()
+        EIP712(name_, "1")
     {
         _mint(initialOwner, 1_000_000 * 10 ** decimals());
     }
@@ -45,13 +47,10 @@ contract MyGovernanceToken is OFT, ERC20Votes {
         _burn(msg.sender, amount);
     }
 
-    // Можно также добавить безопасную отправку с минимальным лимитом
-    function safeSendFrom(
-        SendParam calldata _sendParam,
-        MessagingFee calldata _fee,
-        address _refundAddress
-    ) external payable {
-        require(_sendParam.amountLD >= 10 ** 10, "Too small"); // 1e10 = 0.00000001 токена (пример)
-        _send(_sendParam, _fee, _refundAddress);
-    }
+    function _update(address from, address to, uint256 value)
+    internal
+    override(ERC20, ERC20Votes)
+{
+    super._update(from, to, value);
+}
 }
