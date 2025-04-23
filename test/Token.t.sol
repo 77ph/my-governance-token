@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "../src/MyGovernanceToken.sol";
+import {SendParam, MessagingFee} from "@layerzerolabs/oft-evm/contracts/interfaces/IOFT.sol";
 
 contract TokenTest is Test {
     MyGovernanceToken token;
@@ -38,6 +39,38 @@ contract TokenTest is Test {
         return bytes32(uint256(uint160(_addr)));
     }
 
+    function testSendWorks() public payable {
+        uint256 amount = 1 ether;
+
+        // Подготовка SendParam
+        SendParam memory param = SendParam({
+            dstEid: 109,
+            to: addressToBytes32(user),
+            amountLD: amount,
+            minAmountLD: amount * 9 / 10,
+            extraOptions: "",
+            composeMsg: "",
+            oftCmd: ""
+        });
+
+        // Предварительно mint
+        vm.prank(owner);
+        vm.chainId(1);
+        token.mint(owner, amount);
+
+        // Апрув для контракта (если approvalRequired == true)
+        vm.prank(owner);
+        token.approve(address(token), amount);
+
+        // Получаем fee
+        MessagingFee memory fee = token.quoteSend(param, false);
+
+        // Отправка
+        vm.prank(owner);
+        token.send{value: fee.nativeFee}(param, fee, payable(owner));
+
+        // Здесь можно добавить assert по getVotes / балансу и т.д.
+    }
 
     function testDelegateTracksAfterTransfer() public {
         vm.prank(owner);
